@@ -24,8 +24,8 @@ internal class Program
         //Console.WriteLine(DB.CreateColumn("People", "Person_ID", "INT(255) UNIQUE"));
 
         //Console.WriteLine(DB.CreateColumn("IntelReport", "ID", "INT(255) UNIQUE AUTO_INCREMENT PRIMARY KEY", true));
-        //Console.WriteLine(DB.CreateColumn("IntelReport", "reporter_code_name", "VARCHAR(50) UNIQUE NOT NULL"));
-        //Console.WriteLine(DB.CreateColumn("IntelReport", "target_code_name", "VARCHAR(50) UNIQUE NOT NULL"));
+        //Console.WriteLine(DB.CreateColumn("IntelReport", "reporter_code_name", "VARCHAR(50) NOT NULL"));
+        //Console.WriteLine(DB.CreateColumn("IntelReport", "target_code_name", "VARCHAR(50) NOT NULL"));
         //Console.WriteLine(DB.CreateColumn("IntelReport", "text", "VARCHAR(255) NOT NULL"));
         //Console.WriteLine(DB.CreateColumn("IntelReport", "date", "TIMESTAMP NOT NULL"));
 

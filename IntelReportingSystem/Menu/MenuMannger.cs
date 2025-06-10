@@ -49,12 +49,10 @@ namespace IntelReportingSystem.Menu
             string opt = GetOption_from3();
             if (SwitchCaseLogin(opt))
             {
-                Console.WriteLine("\nconnection success\n");
                 return true;
             }
             else
             {
-                Console.WriteLine("\nconnection failed.\n");
                 return false;
             }
         }
@@ -77,6 +75,14 @@ namespace IntelReportingSystem.Menu
             }
             return opt;
         }
+        static void PrintConnectionSuccess()
+        {
+            Console.WriteLine("\nconnection success\n");
+        }
+        static void PrintConnectionFailed()
+        {
+            Console.WriteLine("\nconnection failed\n");
+        }
 
         
         static bool SwitchCaseLogin(string opt)
@@ -85,11 +91,21 @@ namespace IntelReportingSystem.Menu
             {
                 case "1":
                     Current_reporter = Login_SignIn.LogInManager();
-                    if(Current_reporter == null) return false;
+                    if (Current_reporter == null)
+                    {
+                        PrintConnectionFailed();
+                        return false;
+                    }
+                    PrintConnectionSuccess();
                     return true;
                 case "2":
                     Current_reporter = Login_SignIn.SignInManager();
-                    if (Current_reporter == null) return false;
+                    if (Current_reporter == null)
+                    {
+                        PrintConnectionFailed();
+                        return false;
+                    }
+                    PrintConnectionSuccess();
                     return true;
                 case "3":
                     ExitOpt();
@@ -136,16 +152,18 @@ namespace IntelReportingSystem.Menu
             string targetCodeName = GetTargetCodeName();
             PrintEnterReportText();
             string reportText = GetReportBody();
-            if(DB_connection.InsertRecord("intelreport", new Dictionary<string, object> { {"reporter_codename", Current_reporter.CURRENT_codeName},
-                                                                                       {"target_codename", targetCodeName },
-                                                                                       {"text", reportText },
-                                                                                       {"date", DateTime.Now } }))
+            string[] keys = { "reporter_code_name", "target_code_name", "text", "date" };
+            object[] values = { Current_reporter.CURRENT_codeName, targetCodeName, reportText, DateTime.Now };
+            if(DB_connection.InsertRecord("intelreport", keys, values))
             {
-                Console.WriteLine("the report has reported");
+                Console.WriteLine("\nthe report has reported\n");
             }
-            Console.WriteLine("the has not reported");
-
+            else
+            {
+                Console.WriteLine("\nreport failed\n");
+            }
         }
+
 
         public static void PrintEnterTargetCodeName()
         {

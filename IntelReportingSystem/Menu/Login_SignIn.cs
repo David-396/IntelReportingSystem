@@ -76,8 +76,9 @@ namespace IntelReportingSystem.Menu
             Console.WriteLine($"your code name is {code_name}. save it for your next entry");
             CRUD_Functions connection = new CRUD_Functions(connectionSTR);
 
-            Dictionary<string, object> parameters = new Dictionary<string, object> { { "user_name", user_name }, { "code_name", code_name }, { "Person_ID", Person_ID } };
-            if (connection.InsertRecord("People", parameters))
+            string[] keys = new string[] { "user_name", "code_name", "Person_ID" };
+            object[] values = new object[] { user_name, code_name, Person_ID };
+            if (connection.InsertRecord("People", keys, values))
             {
                 Login_SignIn current_person = new Login_SignIn { CURRENT_codeName = code_name, CURRENT_userName = user_name };
                 return current_person;

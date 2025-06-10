@@ -15,6 +15,8 @@ namespace IntelReportingSystem.Validations
             "database=intel_reporting_system;" +
             "port=3306;";
 
+
+
         public static bool IfReporterExist(string code_name)
         {
             CRUD_Functions DB = new CRUD_Functions(connectionSTR);

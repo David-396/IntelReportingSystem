@@ -107,29 +107,36 @@ namespace IntelReportingSystem.DB_Handle
         }
 
         // insert record
-        public bool InsertRecord(string tableName, Dictionary<string, object> obj)
+        public bool InsertRecord(string tableName, string[] keys, object[] values)
         {
             using (MySqlConnection conn = new MySqlConnection(this.ConnectionString))
                 try
                 {
                     conn.Open();
-                    string columns = string.Join(", ", obj.Keys);
-                    string paramNames = string.Join(", ", obj.Keys.Select(k => "@" + k));
+                    string columns = string.Join(", ", keys);
+                    string valuesStr = "";
+                    for(int i=0; i<values.Length; i++)
+                    {
+                        valuesStr += $"'{values[i]}'";
+                        if (i < values.Length - 1)
+                        {
+                            valuesStr += ", " ;
+                        }
+                    }
 
-                    string query = $"INSERT INTO {tableName} ({columns}) VALUES ({paramNames})";
-
+                    string query = $"INSERT INTO {tableName} ({columns}) VALUES ({valuesStr})";
                     MySqlCommand cmd = new MySqlCommand(query, conn);
 
-                    foreach (var pair in obj)
-                    {
-                        cmd.Parameters.AddWithValue("@" + pair.Key, pair.Value);
-                    }
+                    //foreach (var pair in obj)
+                    //{
+                    //    cmd.Parameters.AddWithValue("@" + );
+                    //}
                     cmd.ExecuteNonQuery();
                     return true;
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine("wrong input. check your details again");
+                    Console.WriteLine($"\nwrong input. check your details again\nthe error I get : {ex.Message}");
                     return false;
                 }
         }
