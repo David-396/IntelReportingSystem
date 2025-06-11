@@ -22,6 +22,8 @@ internal class Program
         //Console.WriteLine(DB.CreateColumn("People", "code_name", "VARCHAR(50) UNIQUE NOT NULL PRIMARY KEY"));
         //Console.WriteLine(DB.CreateColumn("People", "ID", "INT(255) UNIQUE AUTO_INCREMENT"));
         //Console.WriteLine(DB.CreateColumn("People", "Person_ID", "INT(255) UNIQUE"));
+        //Console.WriteLine(DB.CreateColumn("People", "Type", "ENUM('Reporter','Recruitment','Target')"));
+        //Console.WriteLine(DB.CreateColumn("People", "Reports_number", "INT(255)"));
 
         //Console.WriteLine(DB.CreateColumn("IntelReport", "ID", "INT(255) UNIQUE AUTO_INCREMENT PRIMARY KEY", true));
         //Console.WriteLine(DB.CreateColumn("IntelReport", "reporter_code_name", "VARCHAR(50) NOT NULL"));
@@ -30,5 +32,6 @@ internal class Program
         //Console.WriteLine(DB.CreateColumn("IntelReport", "date", "TIMESTAMP NOT NULL"));
 
         MenuManager.Run();
+
     }
 }

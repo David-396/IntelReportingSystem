@@ -74,28 +74,28 @@ namespace IntelReportingSystem.DB_Handle
                             tableStr[i].Add(column, reader[column]);
                         }
                     }
+                    return tableStr;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                    return null;
                 }
-                return tableStr;
         }
 
         // update a table
-        public bool UpdateColumn(string tableName, int id, string column, object value)
+        public bool UpdateColumn(string tableName, string code_name, string column, object value)
         {
             using (MySqlConnection conn = new MySqlConnection(this.ConnectionString))
                 try
                 {
                     conn.Open();
 
-                    string query = $"UPDATE `{tableName}` SET `{column}` = @value WHERE ID = @id";
+                    string query = $"UPDATE `{tableName}` SET `{column}` = @value WHERE code_name = @code_name";
 
                     MySqlCommand cmd = new MySqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@value", column);
-                    cmd.Parameters.AddWithValue("@id", id);
-
+                    cmd.Parameters.AddWithValue("@value", value);
+                    cmd.Parameters.AddWithValue("@code_name", code_name);
                     cmd.ExecuteNonQuery();
                     return true;
                 }
@@ -162,6 +162,38 @@ namespace IntelReportingSystem.DB_Handle
                 }
         }
 
+
+        // function to make a flex command
+        public List<Dictionary<string, object>> FlexibleCommand(string select, string from, string join="", string on="", string where = "")
+        {
+            using (MySqlConnection conn = new MySqlConnection(this.ConnectionString))
+                try
+                {
+                    List<Dictionary<string, object>> tableStr = new List<Dictionary<string, object>>();
+                    conn.Open();
+                    string query = $"SELECT {select} FROM {from} {join} {on} {where}";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+                    string[] SelectedColumn = select.Split(',');
+                    int i = 0;
+                    while (reader.Read())
+                    {
+                        tableStr.Add(new Dictionary<string, object>());
+                        foreach (string column in SelectedColumn)
+                        {
+                            tableStr[i].Add(column, reader[column]);
+                        }
+                    }
+                    return tableStr;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"\nwrong input. check your details again\nthe error I get : {ex.Message}");
+                    return null;
+                }
+        }
 
 
 

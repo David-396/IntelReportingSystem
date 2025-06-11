@@ -22,11 +22,12 @@ namespace IntelReportingSystem.Menu
         public static string GenerateCodeName()
         {
             
-            string[] arrStr = new string[] { "unintermitted",
+            string[] arrStr = new string[] { "d","unintermitted",
                                                 "infanticidal",
                                                 "onychoptosis",
                                                 "americana",
                                                 "revolutionists",
+                                                
                                                 "eurasiatic",
                                                 "agarita",
                                                 "corticosteroid",

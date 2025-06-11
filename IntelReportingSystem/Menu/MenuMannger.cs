@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IntelReportingSystem.Validations;
 using IntelReportingSystem.DB_Handle;
+using IntelReportingSystem.Annalize;
 
 namespace IntelReportingSystem.Menu
 {
@@ -20,6 +21,7 @@ namespace IntelReportingSystem.Menu
         static Login_SignIn Current_reporter;
 
         static bool Exit = false;
+        
 
 
 
@@ -35,7 +37,10 @@ namespace IntelReportingSystem.Menu
             {
                 if (ReporterEnterToSystem())
                 {
-                    OptionsMannager();
+                    while (!Exit)
+                    {
+                        OptionsMannager();
+                    }
                 }
             }
         }
@@ -146,25 +151,28 @@ namespace IntelReportingSystem.Menu
                 "6. EXIT");
         }
 
+        // option 1 - report
         static void EnterReportManager_opt1()
         {
             PrintEnterTargetCodeName();
             string targetCodeName = GetTargetCodeName();
             PrintEnterReportText();
             string reportText = GetReportBody();
+
             string[] keys = { "reporter_code_name", "target_code_name", "text", "date" };
-            object[] values = { Current_reporter.CURRENT_codeName, targetCodeName, reportText, DateTime.Now };
+            object[] values = { Current_reporter.CURRENT_codeName, targetCodeName, reportText, DateTime.Now};
+
             if(DB_connection.InsertRecord("intelreport", keys, values))
             {
                 Console.WriteLine("\nthe report has reported\n");
+                int valueToUpdate = Convert.ToInt32(DB_connection.ReadFromTable("People", "Reports_number", $"code_name='{Current_reporter.CURRENT_codeName}'")[0]["Reports_number"]);
+                DB_connection.UpdateColumn("People", Current_reporter.CURRENT_codeName, "Reports_number", valueToUpdate + 1);
             }
             else
             {
                 Console.WriteLine("\nreport failed\n");
             }
         }
-
-
         public static void PrintEnterTargetCodeName()
         {
             Console.WriteLine("enter the target code name: ");
@@ -184,10 +192,20 @@ namespace IntelReportingSystem.Menu
             return reportBody;
         }
 
-
+        // option 2 - upload a csv file
         static void UploadCSVFileManager_opt2() { }
-        static void ShowPotentialRecruitsManager_opt3() { }
-        static void ShowDangerousTargetsManager_opt4() { }
+
+
+        // option 3 - show the potential recruits
+        static void ShowPotentialRecruitsManager_opt3()
+        {
+            AnnalizeIntel.ShowPotentialRecruitsManager();
+        }
+
+        static void ShowDangerousTargetsManager_opt4()
+        {
+            AnnalizeIntel.ShowDangerousTargetsManager();
+        }
         static void ShowAllAlertsManager_opt5() { }
 
 

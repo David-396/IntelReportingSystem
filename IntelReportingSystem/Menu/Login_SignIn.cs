@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IntelReportingSystem.Validations;
 using IntelReportingSystem.DB_Handle;
+using IntelReportingSystem.Enums;
 
 namespace IntelReportingSystem.Menu
 {
@@ -17,6 +18,8 @@ namespace IntelReportingSystem.Menu
             "user=root;" +
             "database=intel_reporting_system;" +
             "port=3306;";
+
+        static CRUD_Functions DB = new CRUD_Functions(connectionSTR);
 
         public bool IsEmpty()
         {
@@ -43,7 +46,7 @@ namespace IntelReportingSystem.Menu
             PrintEnter_codeName();
             string code_name = Console.ReadLine();
 
-            if(ValidateLogin.IfReporterExist( code_name))
+            if (ValidateLogin.IfReporterExist(code_name))
             {
                 Login_SignIn current_person = new Login_SignIn { CURRENT_codeName = code_name };
                 return current_person;
@@ -60,30 +63,44 @@ namespace IntelReportingSystem.Menu
             string user_name = Console.ReadLine();
             PrintEnter_personId();
             string ID = Console.ReadLine();
-            int Person_ID; 
+            int Person_ID;
             while (!int.TryParse(ID, out Person_ID))
             {
                 Console.WriteLine("enter only numbers! ");
                 ID = Console.ReadLine();
             }
 
-            string code_name = Generate.GenerateCodeName();
-            while (ValidateLogin.IfCodeNameExist(code_name))
+            string code_name = CodenameRegisterConnected(user_name, Convert.ToString(Person_ID));
+            if (code_name == null)
             {
                 code_name = Generate.GenerateCodeName();
+                while (ValidateLogin.IfCodeNameExist(code_name))
+                {
+                    code_name = Generate.GenerateCodeName();
+                }
             }
 
             Console.WriteLine($"your code name is {code_name}. save it for your next entry");
             CRUD_Functions connection = new CRUD_Functions(connectionSTR);
 
-            string[] keys = new string[] { "user_name", "code_name", "Person_ID" };
-            object[] values = new object[] { user_name, code_name, Person_ID };
+            string[] keys = { "user_name", "code_name", "Person_ID", "Type", "Reports_number" };
+            object[] values = { user_name, code_name, Person_ID, PersonType.Reporter , 0};
             if (connection.InsertRecord("People", keys, values))
             {
                 Login_SignIn current_person = new Login_SignIn { CURRENT_codeName = code_name, CURRENT_userName = user_name };
                 return current_person;
             }
             return null;
+        }
+
+        public static string CodenameRegisterConnected(string name, string Person_ID)
+        {
+            List<Dictionary<string, object>> res = DB.ReadFromTable("People", "code_name", $"user_name = {name} AND Person_ID = {Person_ID}");
+            if(res == null)
+            {
+                return null;
+            }
+            return res[0]["code_name"].ToString();
         }
     }
 }
