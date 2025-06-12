@@ -166,7 +166,7 @@ namespace IntelReportingSystem.Menu
             switch (opt)
             {
                 case "1":
-                    ReportManager_opt1.Report();
+                    ReportManager_opt1.EnterReportManager_opt1(Current_reporter.CURRENT_codeName);
                     break;
                 case "2":
                     UploadCSVFileManager_opt2();

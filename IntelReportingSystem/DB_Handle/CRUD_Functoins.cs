@@ -196,6 +196,34 @@ namespace IntelReportingSystem.DB_Handle
                 }
         }
 
+        public List<Dictionary<string, object>> FreeQuery(string tableName, string query, string[] columns)
+        {
+            using (MySqlConnection conn = new MySqlConnection(this.ConnectionString))
+                try
+                {
+                    List<Dictionary<string, object>> tableStr = new List<Dictionary<string, object>>();
+                    conn.Open();
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+                    int i = 0;
+
+                    while (reader.Read())
+                    {
+                        tableStr.Add(new Dictionary<string, object>());
+                        foreach (string column in columns)
+                        {
+                            tableStr[i].Add(column, reader[column]);
+                        }
+                    }
+                    return tableStr;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+        }
 
 
 

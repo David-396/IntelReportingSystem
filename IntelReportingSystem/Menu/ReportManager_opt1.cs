@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IntelReportingSystem.DB_Handle;
+using IntelReportingSystem.Validations;
+using IntelReportingSystem.Enums;
 
 namespace IntelReportingSystem.Menu
 {
@@ -16,31 +18,36 @@ namespace IntelReportingSystem.Menu
                                         "port=3306;";
 
         static CRUD_Functions DB_connection = new CRUD_Functions(connectionSTR);
+        static string targetCodeName;
 
-        static Login_SignIn Current_reporter;
-        static bool Exit;
-
-
-        public static void Report() { }
+        static bool ValidCodeName = false;
 
 
-        static void EnterReportManager_opt1()
+
+
+        public static void EnterReportManager_opt1(string reporterCodeName)
         {
             PrintEnterTargetCodeName();
             string targetCodeName = Console.ReadLine();
-
+            CheckAndGetCodeName(targetCodeName);
+            while (!ValidCodeName)
+            {
+                PrintEnterTargetCodeName();
+                targetCodeName = Console.ReadLine();
+                CheckAndGetCodeName(targetCodeName);
+            }
 
             PrintEnterReportText();
             string reportText = Console.ReadLine();
 
             string[] keys = { "reporter_code_name", "target_code_name", "text" };
-            object[] values = { Current_reporter.CURRENT_codeName, targetCodeName, reportText };
+            object[] values = { reporterCodeName, targetCodeName, reportText };
 
             if (DB_connection.InsertRecord("intelreport", keys, values))
             {
                 Console.WriteLine("\nthe report has reported\n");
-                int valueToUpdate = Convert.ToInt32(DB_connection.ReadFromTable("People", "Reports_number", $"code_name='{Current_reporter.CURRENT_codeName}'")[0]["Reports_number"]);
-                DB_connection.UpdateColumn("People", Current_reporter.CURRENT_codeName, "Reports_number", valueToUpdate + 1);
+                int valueToUpdate = Convert.ToInt32(DB_connection.ReadFromTable("People", "Reports_number", $"code_name='{targetCodeName}'")[0]["Reports_number"]);
+                DB_connection.UpdateColumn("People", targetCodeName, "Reports_number", valueToUpdate + 1);
             }
             else
             {
@@ -48,7 +55,7 @@ namespace IntelReportingSystem.Menu
             }
         }
 
-        public static void IfCodeNameKnown(string codeName)
+        public static void CheckAndGetCodeName(string codeName)
         {
             if(codeName == null || codeName.Length == 0)
             {
@@ -58,8 +65,38 @@ namespace IntelReportingSystem.Menu
                 PrintEnterTargetName();
                 string targetName = Console.ReadLine();
 
-                //if()
+                string query = $"SELECT code_name FROM People WHERE person_id = '{targetID}' AND user_name = '{targetID}'";
+                List<Dictionary<string, object>> nameIdInDB = DB_connection.FreeQuery("people", query, new string[] { "code_name"});
+
+                if(nameIdInDB == null || nameIdInDB.Count == 0)
+                {
+                    string new_code_name = Generate.GenerateCodeName();
+                    while (ValidateLogin.IfCodeNameExist(new_code_name))
+                    {
+                        new_code_name = Generate.GenerateCodeName();
+                    }
+
+                    string[] keys = { "user_name", "code_name", "ID", "Person_ID", "Type", "Reports_number" };
+                    object[] values = { targetName, new_code_name, targetID, PersonType.Target, 0 };
+                    
+                    ValidCodeName = DB_connection.InsertRecord("People", keys, values);
+                    ValidCodeName = true;
+                    targetCodeName = new_code_name;
+                    return;
+
+                }
+                targetCodeName = Convert.ToString(nameIdInDB[0]["code_name"]);
+                ValidCodeName = true;
             }
+
+
+            if (ValidateLogin.IfCodeNameExist(codeName))
+            {
+                ValidCodeName = true;
+                targetCodeName = codeName;
+            }
+            
+
         }
 
 
