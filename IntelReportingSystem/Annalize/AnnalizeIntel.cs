@@ -39,14 +39,18 @@ namespace IntelReportingSystem.Annalize
             }
         }
 
+
+
         public static void ShowPotentialRecruitsManager()
         {
             List<Dictionary<string, object>> potentialRecruitments = DB.ReadFromTable("People", "user_name, code_name, Person_ID, Reports_number", "Reports_number >= 10");
+            
             if(potentialRecruitments == null || potentialRecruitments.Count == 0)
             {
                 Console.WriteLine("\nno potential recruitments\n");
                 return;
             }
+
             Console.WriteLine("\nthe potential recruitments: ");
             foreach(Dictionary<string, object> person in potentialRecruitments)
             {

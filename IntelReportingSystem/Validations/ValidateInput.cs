@@ -32,5 +32,6 @@ namespace IntelReportingSystem.Validations
             }
             return false;
         }
+
     }
 }

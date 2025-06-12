@@ -47,7 +47,7 @@ namespace IntelReportingSystem.Menu
 
 
 
-        //login / signIn phase
+        //logIn / signIn phase
         static bool ReporterEnterToSystem()
         {
             PrintLogin_SignIn();
@@ -151,61 +151,13 @@ namespace IntelReportingSystem.Menu
                 "6. EXIT");
         }
 
-        // option 1 - report
-        static void EnterReportManager_opt1()
-        {
-            PrintEnterTargetCodeName();
-            string targetCodeName = GetTargetCodeName();
-            PrintEnterReportText();
-            string reportText = GetReportBody();
-
-            string[] keys = { "reporter_code_name", "target_code_name", "text", "date" };
-            object[] values = { Current_reporter.CURRENT_codeName, targetCodeName, reportText, DateTime.Now};
-
-            if(DB_connection.InsertRecord("intelreport", keys, values))
-            {
-                Console.WriteLine("\nthe report has reported\n");
-                int valueToUpdate = Convert.ToInt32(DB_connection.ReadFromTable("People", "Reports_number", $"code_name='{Current_reporter.CURRENT_codeName}'")[0]["Reports_number"]);
-                DB_connection.UpdateColumn("People", Current_reporter.CURRENT_codeName, "Reports_number", valueToUpdate + 1);
-            }
-            else
-            {
-                Console.WriteLine("\nreport failed\n");
-            }
-        }
-        public static void PrintEnterTargetCodeName()
-        {
-            Console.WriteLine("enter the target code name: ");
-        }
-        public static string GetTargetCodeName()
-        {
-            string codeNameTarget = Console.ReadLine();
-            return codeNameTarget;
-        }
-        public static void PrintEnterReportText()
-        {
-            Console.WriteLine("enter the report body: ");
-        }
-        public static string GetReportBody()
-        {
-            string reportBody = Console.ReadLine();
-            return reportBody;
-        }
 
         // option 2 - upload a csv file
         static void UploadCSVFileManager_opt2() { }
 
 
-        // option 3 - show the potential recruits
-        static void ShowPotentialRecruitsManager_opt3()
-        {
-            AnnalizeIntel.ShowPotentialRecruitsManager();
-        }
 
-        static void ShowDangerousTargetsManager_opt4()
-        {
-            AnnalizeIntel.ShowDangerousTargetsManager();
-        }
+        // option 5 - show all the potential recruitments
         static void ShowAllAlertsManager_opt5() { }
 
 
@@ -214,16 +166,16 @@ namespace IntelReportingSystem.Menu
             switch (opt)
             {
                 case "1":
-                    EnterReportManager_opt1();
+                    ReportManager_opt1.Report();
                     break;
                 case "2":
                     UploadCSVFileManager_opt2();
                     break;
                 case "3":
-                    ShowPotentialRecruitsManager_opt3();
+                    AnnalizeIntel.ShowPotentialRecruitsManager();
                     break;
                 case "4":
-                    ShowDangerousTargetsManager_opt4();
+                    AnnalizeIntel.ShowDangerousTargetsManager();
                     break;
                 case "5":
                     ShowAllAlertsManager_opt5();

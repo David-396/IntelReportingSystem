@@ -7,6 +7,7 @@ using Google.Protobuf.WellKnownTypes;
 using MySql.Data.MySqlClient;
 using MySql.Data.MySqlClient.X.XDevAPI.Common;
 
+
 namespace IntelReportingSystem.DB_Handle
 {
     internal class CRUD_Functions
